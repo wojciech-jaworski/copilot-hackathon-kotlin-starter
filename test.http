@@ -1,5 +1,15 @@
 ###
-POST http://localhost:8080/currency
+GET http://localhost:3000/health-check
+
+> {%
+    client.test('should return simple health check message',
+        () => {
+            client.assert(response.body === "health check OK");
+        });
+%}
+
+###
+POST http://localhost:3000/currency
 Content-Type: application/json
 
 {
@@ -10,7 +20,7 @@ Content-Type: application/json
       "date": "2023-01-01"
     },
     {
-      "currency": "EUR",
+      "currency": "USD",
       "price_pln": "3.98",
       "date": "2023-01-01"
     }
@@ -21,12 +31,35 @@ Content-Type: application/json
     client.test('should add currency value for given dates',
         () => {
             console.log(response.status);
-            client.assert(response.status === 204);
+            client.assert(response.status === 201);
         });
 %}
 
 ###
-POST http://localhost:8080/currencyExchange
+GET http://localhost:3000/currency
+
+> {%
+    client.test('should return currency exchange rates',
+        () => {
+            console.log(response.body);
+            client.assert( JSON.stringify(response.body) ===  JSON.stringify({
+                "currencies": [
+                    {
+                        "currency": "EUR",
+                        "price_pln": "4.31",
+                        "date": "2023-01-01"
+                    },
+                    {
+                        "currency": "USD",
+                        "price_pln": "3.98",
+                        "date": "2023-01-01"
+                    }
+                ]}));
+        });
+%}
+
+###
+POST http://localhost:3000/currencyExchange
 Content-Type: application/json
 
 {
@@ -37,28 +70,96 @@ Content-Type: application/json
 }
 
 > {%
-    client.test('should make currency exchange for given amount',
+    client.test('should make currency exchange for given amount EUR',
         () => {
             client.assert(JSON.stringify(response.body) ===  JSON.stringify({
                 "currency": "PLN",
-                "value": 490.85339999999997,
+                "value":  531.5523,
                 "date": "2023-01-01"
             }));
         });
 %}
 
 ###
-GET http://localhost:8080/currency
+POST http://localhost:3000/currencyExchange
+Content-Type: application/json
+
+{
+  "from_currency": "USD",
+  "to_currency": "PLN",
+  "amount": 123.33,
+  "date": "2023-01-01"
+}
 
 > {%
-    client.test('should return currency exchange rates',
+    client.test('should make currency exchange for given amount USD',
         () => {
-            client.assert( JSON.stringify(response.body) ===  JSON.stringify({
-                "EUR": {
-                    "PLN": {
-                        "2023-01-01": 3.98
-                    }
-                }
+            client.assert(JSON.stringify(response.body) ===  JSON.stringify({
+                "currency": "PLN",
+                "value":  490.85339999999997,
+                "date": "2023-01-01"
             }));
         });
 %}
+
+###
+POST http://localhost:3000/currency
+Content-Type: application/json
+
+{
+  "currencies": [
+    {
+      "currency": "EUR",
+      "price_pln": "4.50",
+      "date": "2023-01-02"
+    },
+    {
+      "currency": "USD",
+      "price_pln": "4.00",
+      "date": "2023-01-02"
+    }
+  ]
+}
+
+> {%
+    client.test('should add new rates to existing rates',
+        () => {
+            console.log(response.status);
+            client.assert(response.status === 201);
+        });
+%}
+
+###
+GET http://localhost:3000/currency
+
+> {%
+    client.test('should return more currency rates',
+        () => {
+            client.assert( JSON.stringify(response.body) ===  JSON.stringify({
+                "currencies": [
+                    {
+                        "currency": "EUR",
+                        "price_pln": "4.50",
+                        "date": "2023-01-02"
+                    },
+                    {
+                        "currency": "USD",
+                        "price_pln": "4.00",
+                        "date": "2023-01-02"
+                    },
+                    {
+                        "currency": "EUR",
+                        "price_pln": "4.31",
+                        "date": "2023-01-01"
+                    },
+                    {
+                        "currency": "USD",
+                        "price_pln": "3.98",
+                        "date": "2023-01-01"
+                    }
+                ]}
+            ));
+        });
+%}
+
+
