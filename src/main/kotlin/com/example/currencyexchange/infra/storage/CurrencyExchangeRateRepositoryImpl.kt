@@ -7,10 +7,10 @@ import org.springframework.stereotype.Repository
 @Repository
 class CurrencyExchangeRateRepositoryImpl : CurrencyExchangeRateRepository {
 
-    var storage: MutableList<CurrencyExchangeRate> = ArrayList()
+    var storage: MutableSet<CurrencyExchangeRate> = LinkedHashSet()
 
     override fun getAllCurrencyExchangeRates(): List<CurrencyExchangeRate> {
-        return storage
+        return storage.toList()
     }
 
     override fun updateCurrencyExchangeRates(currencyExchangeRates: List<CurrencyExchangeRate>) {
