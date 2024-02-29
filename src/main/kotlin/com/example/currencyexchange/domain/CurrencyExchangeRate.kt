@@ -4,7 +4,7 @@ import java.math.BigDecimal
 
 data class CurrencyExchangeRate(
     val currency: String,
-    val price_pln: BigDecimal,
+    val pricePln: BigDecimal,
     val date: String,
 )
 

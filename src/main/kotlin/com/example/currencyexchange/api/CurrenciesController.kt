@@ -49,12 +49,12 @@ data class CurrencyExchangeRateDto(
 
 fun CurrencyExchangeRate.toDto() = CurrencyExchangeRateDto(
     currency = currency,
-    price_pln = price_pln.stripTrailingZeros().toPlainString(),
+    price_pln = pricePln.stripTrailingZeros().toPlainString(),
     date = date,
 )
 
 fun CurrencyExchangeRateDto.toDomain() = CurrencyExchangeRate(
     currency = currency,
-    price_pln = BigDecimal(price_pln),
+    pricePln = BigDecimal(price_pln),
     date = date,
 )
