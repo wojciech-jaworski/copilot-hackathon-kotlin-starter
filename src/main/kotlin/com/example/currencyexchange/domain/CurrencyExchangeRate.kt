@@ -1,8 +1,10 @@
 package com.example.currencyexchange.domain
 
+import java.math.BigDecimal
+
 data class CurrencyExchangeRate(
     val currency: String,
-    val price_pln: String,
+    val price_pln: BigDecimal,
     val date: String,
 )
 
